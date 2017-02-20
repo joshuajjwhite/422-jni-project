@@ -1,10 +1,6 @@
 # 422-jni-project
 
 Reliable & Secure Systems Design
-ECE 422
-Winter 2017
-Project #1: Fault-Tolerant Systems
-Due date: Tuesday, March 7, 2017, 11:00 AM
 
 # Overview
 

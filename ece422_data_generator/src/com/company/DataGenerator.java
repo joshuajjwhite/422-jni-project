@@ -11,24 +11,24 @@ public class DataGenerator {
     private int size;
     private String outputfile;
 
-    protected DataGenerator(String outputfile, int size){
+    private DataGenerator(String outputfile, int size){
         this.setSize(size);
         this.setOutputfile(outputfile);
     }
 
-    public String getOutputfile() {
+    private String getOutputfile() {
         return outputfile;
     }
 
-    public void setOutputfile(String outputfile) {
+    private void setOutputfile(String outputfile) {
         this.outputfile = outputfile;
     }
 
-    public int getSize() {
+    private int getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    private void setSize(int size) {
         this.size = size;
     }
 
@@ -58,11 +58,15 @@ public class DataGenerator {
 
     /**
      * @param args
-     * @throws IOException
+     *
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         DataGenerator generator = new DataGenerator(args[0],Integer.parseInt(args[1]));
-        generator.writeToFile(generator.generate());
+        try {
+            generator.writeToFile(generator.generate());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

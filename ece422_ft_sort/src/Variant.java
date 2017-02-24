@@ -6,11 +6,13 @@ import static java.lang.Thread.sleep;
 public class Variant implements Runnable {
 
     private float failrate;
-    private Sorter variant;
+    private Sorter sorter;
+    private SortAdjudicator at;
 
-    public Variant(Sorter variant, float failrate){
+    public Variant(Sorter sorter, float failrate, SortAdjudicator at){
         setFailrate(failrate);
-        setVariant(variant);
+        setSorter(sorter);
+        setAt(at);
     }
 
 
@@ -19,23 +21,27 @@ public class Variant implements Runnable {
         try{
             sort();
             //for (;;);
-            //for(int i=0; i<getVariant().getInts().length; i++){System.out.println(getVariant().getInts()[i]);}
-
+            //for(int i=0; i<getSorter().getInts().length; i++){System.out.println(getSorter().getInts()[i]);}
         }
         catch (ThreadDeath td){
-            System.out.println("Variant is Dead");
+            System.out.println("Variant was Killed");
             throw new ThreadDeath();
         }
     }
 
 
-
     public void sort(){
-        if(getFailrate() > 0){
-            System.out.println("Variant Failed");
-            throw new ThreadDeath();
+        try {
+            if (false) {
+                //failure
+                throw new localException();
+            }
+            getAt().ajudicate(getSorter().sort());
         }
-        getVariant().sort();
+        catch (localException le){
+            System.out.println("Random Simulated Failure");
+            getAt().variantFailure();
+        }
     }
 
     public float getFailrate() {
@@ -46,11 +52,19 @@ public class Variant implements Runnable {
         this.failrate = failrate;
     }
 
-    public Sorter getVariant() {
-        return variant;
+    public Sorter getSorter() {
+        return sorter;
     }
 
-    public void setVariant(Sorter variant) {
-        this.variant = variant;
+    public void setSorter(Sorter sorter) {
+        this.sorter = sorter;
+    }
+
+    public SortAdjudicator getAt() {
+        return at;
+    }
+
+    public void setAt(SortAdjudicator at) {
+        this.at = at;
     }
 }

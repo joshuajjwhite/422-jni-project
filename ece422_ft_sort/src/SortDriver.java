@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Timer;
 
 public class SortDriver {
@@ -8,11 +9,7 @@ public class SortDriver {
     private Variant primary;
     private Variant secondary;
 
-    private WatchDog watchdog;
-
     private SortAdjudicator at;
-
-    private Timer timer;
 
     private int timeout;
 
@@ -21,64 +18,65 @@ public class SortDriver {
         setOutput(new FileHandler(outputfile));
         setTimeout(timeout);
 
-        //Checkpoint
-        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), primaryfr));
-        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), secondaryfr));
-
-        setTimer(new Timer());
-
         setAt(new SortAdjudicator());
 
-        setWatchdog(null);
+        //Checkpoint
+        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), primaryfr, getAt()));
+        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), secondaryfr, getAt()));
+
     }
 
     public void start(){
         //Primary Algorithm
-        //runVariant(getPrimary(), "Primary");
+        runVariant(getPrimary(), "Primary");
 
-        Thread thread = new Thread(getPrimary());
-        setWatchdog(new WatchDog(thread));
+        if(getAt().success()){
+            System.out.println("Success on Primary");
+            writeVariant(getPrimary());
+        }
+        else{
+            System.out.println("Running Secondary...");
+            runVariant(getSecondary(), "Secondary");
+        }
 
-        getTimer().schedule(getWatchdog(), getTimeout());
+        /*
+        if(getAt().success()){
+            System.out.println("Success on Secondary");
+            writeVariant(getSecondary());
+        }
+        else{
+            System.out.println("Failure on Secondary");
+            throw new ThreadDeath();
+        }*/
+    }
+
+    private void runVariant(Variant variant, String desc) {
+        Thread thread = new Thread(variant);
+        WatchDog watchdog = new WatchDog(thread);
+
+        Timer timer = new Timer();
+        timer.schedule(watchdog, getTimeout());
+
         thread.start();
         try {
             thread.join();
-            getTimer().cancel();
-            System.out.println("End of " + "Primary");
-            thread=null;
+            timer.cancel();
+            System.out.println("End of " + desc);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            System.out.println("Primary" + " Interrupted");
+            System.out.println(desc + " Interrupted");
         }
+    }
 
-        if(getAt().test(getPrimary().getVariant().getInts())){
-            System.out.println("Sucess 1");
-        }
-
-        //Secondary
-        Thread secondary = new Thread(getSecondary());
-        setWatchdog(new WatchDog(secondary));
-
-        setTimer(new Timer());
-        getTimer().schedule(getWatchdog(), getTimeout());
-        secondary.start();
+    private void writeVariant(Variant variant){
+        System.out.println("Sucess");
         try {
-            secondary.join();
-            getTimer().cancel();
-            System.out.println("End of " + "Secondary");
-        } catch (InterruptedException e) {
+            getOutput().writeToFile(variant.getSorter().getInts());
+        } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Secondary" + " Interrupted");
-        }
-
-        if(getAt().test(getSecondary().getVariant().getInts())){
-            System.out.println("Sucess 2");
         }
     }
 
-    public void runVariant(Variant variant, String desc){
-
-    }
 
     public FileHandler getOutput() {
         return output;
@@ -94,16 +92,6 @@ public class SortDriver {
 
     public void setInput(FileHandler input) {
         this.input = input;
-    }
-
-
-
-    public WatchDog getWatchdog() {
-        return watchdog;
-    }
-
-    public void setWatchdog(WatchDog watchdog) {
-        this.watchdog = watchdog;
     }
 
 
@@ -135,14 +123,6 @@ public class SortDriver {
         SortDriver driver = new SortDriver(args[0], args[1], Float.parseFloat(args[2]),
                 Float.parseFloat(args[3]), Integer.parseInt(args[4]));
         driver.start();
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public void setTimer(Timer timer) {
-        this.timer = timer;
     }
 
     public int getTimeout() {

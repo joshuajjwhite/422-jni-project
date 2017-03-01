@@ -2,8 +2,15 @@
  * Created by joshua on 22/02/17.
  */
 public class HeapSort extends Sorter {
+
+    private int memoryacesses;
+    private int[] ints;
+
     public HeapSort(int[] ints) {
         super(ints);
+        setMemoryacesses(0);
+        setInts(ints);
+
     }
 
 
@@ -25,11 +32,16 @@ public class HeapSort extends Sorter {
 
     @Override
     public int[] sort() {
-        
+        setMemoryacesses(0);
+
         int[] sortints = createClone();
         int n = sortints.length;
-        for (int k = n/2; k >= 1; k--)
+        addToAccesses(2);
+
+        for (int k = n/2; k >= 1; k--) {
             sink(sortints, k, n);
+
+        }
         while (n > 1) {
             exch(sortints, 1, n--);
             sink(sortints, 1, n);
@@ -43,13 +55,17 @@ public class HeapSort extends Sorter {
      * Helper functions to restore the heap invariant.
      ***************************************************************************/
 
-    private static void sink(int[] sortints, int k, int n) {
+    private void sink(int[] sortints, int k, int n) {
         while (2*k <= n) {
+            addToAccesses(2);
             int j = 2*k;
+            addToAccesses(2);
             if (j < n && less(sortints, j, j+1)) j++;
+            addToAccesses(2);
             if (!less(sortints, k, j)) break;
             exch(sortints, k, j);
             k = j;
+            addToAccesses(2);
         }
     }
 
@@ -57,23 +73,51 @@ public class HeapSort extends Sorter {
      * Helper functions for comparisons and swaps.
      * Indices are "off-by-one" to support 1-based indexing.
      ***************************************************************************/
-    private static boolean less(int[] sortints, int i, int j) {
-        return sortints[i-1] < (sortints[j-1]);
+    private boolean less(int[] sortints, int i, int j) {
+        addToAccesses(2);
+        return sortints[i-1] < sortints[j-1];
     }
 
-    private static void exch(int[] sortints, int i, int j) {
+    private void exch(int[] sortints, int i, int j) {
         int swap = sortints[i-1];
+        addToAccesses(2);
         sortints[i-1] = sortints[j-1];
+        addToAccesses(2);
         sortints[j-1] = swap;
+        addToAccesses(2);
     }
     
     private int[] createClone(){
         int[] clone = new int[getInts().length];
+        addToAccesses(1);
         
         for(int i=0; i<getInts().length; i++){
             clone[i] = getInts()[i];
+            addToAccesses(2);
         }
         
         return clone;
+    }
+
+    @Override
+    public int[] getInts() {
+        return ints;
+    }
+
+    public void setInts(int[] ints) {
+        this.ints = ints;
+    }
+
+    @Override
+    public int getMemoryacesses() {
+        return memoryacesses;
+    }
+
+    public void setMemoryacesses(int memoryacesses) {
+        this.memoryacesses = memoryacesses;
+    }
+
+    public void addToAccesses(int i){
+        setMemoryacesses(getMemoryacesses() + i);
     }
 }

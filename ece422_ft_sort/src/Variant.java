@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import static java.lang.Thread.sleep;
 
 /**
@@ -8,6 +10,7 @@ public class Variant implements Runnable {
     private float failrate;
     private Sorter sorter;
     private SortAdjudicator at;
+    private boolean success;
 
     public Variant(Sorter sorter, float failrate, SortAdjudicator at){
         setFailrate(failrate);
@@ -20,11 +23,10 @@ public class Variant implements Runnable {
     public void run() {
         try{
             sort();
-            //for (;;);
-            //for(int i=0; i<getSorter().getInts().length; i++){System.out.println(getSorter().getInts()[i]);}
         }
         catch (ThreadDeath td){
-            System.out.println("Variant was Killed");
+            System.out.print("Variant was Killed... ");
+            variantFailure();
             throw new ThreadDeath();
         }
     }
@@ -32,15 +34,15 @@ public class Variant implements Runnable {
 
     public void sort(){
         try {
-            if (false) {
-                //failure
+            getAt().ajudicate(getSorter().sort());
+
+            if (isFailure() || !getAt().isSuccess()) {
                 throw new localException();
             }
-            getAt().ajudicate(getSorter().sort());
+            variantSuccess();
         }
         catch (localException le){
-            System.out.println("Random Simulated Failure");
-            getAt().variantFailure();
+            variantFailure();
         }
     }
 
@@ -48,8 +50,8 @@ public class Variant implements Runnable {
         return failrate;
     }
 
-    public void setFailrate(float failrate) {
-        this.failrate = failrate;
+    public void setFailrate(float hazard) {
+        this.failrate = hazard;
     }
 
     public Sorter getSorter() {
@@ -66,5 +68,36 @@ public class Variant implements Runnable {
 
     public void setAt(SortAdjudicator at) {
         this.at = at;
+    }
+
+    private boolean isFailure(){
+        //Evaluates random failure of variant
+        Random rand = new Random();
+        float hazard = sorter.getMemoryacesses()*getFailrate();
+        float chance = rand.nextFloat();
+
+        if((0.5f <= chance) && (chance <= (0.5f + hazard))){
+            System.out.println("Random Failure... chance: " + chance + " hazard: " + hazard);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    private void variantFailure(){
+        System.out.println("Failure of Variant");
+        setSuccess(false);
+    }
+
+    private void variantSuccess(){
+        System.out.println("Success of Variant");
+        setSuccess(true);
     }
 }

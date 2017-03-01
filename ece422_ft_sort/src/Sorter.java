@@ -3,22 +3,27 @@
  */
 public abstract class Sorter {
 
-    private int[] ints;
+    /*
+    * Memory accesses will be defined as reading or writing to a variable
+    * */
+
+
 
     public Sorter(int[] ints){
-        setInts(ints);
+        //setInts(ints);
+        //setMemoryacesses(0);
     }
 
-    public int[] sort(){
+    public int[] sort() {
 
         return new int[0];
     }
 
-    public int[] getInts() {
-        return ints;
+    public int getMemoryacesses() {
+       return 0;
     }
 
-    public void setInts(int[] ints) {
-        this.ints = ints;
+    public int[] getInts() {
+        return new int[0];
     }
 }

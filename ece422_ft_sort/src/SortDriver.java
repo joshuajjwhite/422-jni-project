@@ -13,7 +13,7 @@ public class SortDriver {
 
     private int timeout;
 
-    public SortDriver(String inputfile, String outputfile, float primaryfr, float secondaryfr, int timeout){
+    public SortDriver(String inputfile, String outputfile, float pfail, float sfail, int timeout){
         setInput(new FileHandler(inputfile));
         setOutput(new FileHandler(outputfile));
         setTimeout(timeout);
@@ -21,8 +21,8 @@ public class SortDriver {
         setAt(new SortAdjudicator());
 
         //Checkpoint
-        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), primaryfr, getAt()));
-        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), secondaryfr, getAt()));
+        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), pfail, getAt()));
+        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), sfail, getAt()));
 
     }
 
@@ -30,7 +30,7 @@ public class SortDriver {
         //Primary Algorithm
         runVariant(getPrimary(), "Primary");
 
-        if(getAt().success()){
+        if(getPrimary().isSuccess()){
             System.out.println("Success on Primary");
             writeVariant(getPrimary());
         }
@@ -40,7 +40,7 @@ public class SortDriver {
         }
 
         /*
-        if(getAt().success()){
+        if(getAt().isSuccess()){
             System.out.println("Success on Secondary");
             writeVariant(getSecondary());
         }
@@ -61,7 +61,8 @@ public class SortDriver {
         try {
             thread.join();
             timer.cancel();
-            System.out.println("End of " + desc);
+            System.out.print("End of " + desc + "... ");
+            //System.out.println(Integer.toString(variant.getSorter().getMemoryacesses()) + " Memory Accesses");
         } catch (InterruptedException e) {
             e.printStackTrace();
             System.out.println(desc + " Interrupted");
@@ -69,7 +70,6 @@ public class SortDriver {
     }
 
     private void writeVariant(Variant variant){
-        System.out.println("Sucess");
         try {
             getOutput().writeToFile(variant.getSorter().getInts());
         } catch (IOException e) {

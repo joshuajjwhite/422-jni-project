@@ -8,9 +8,6 @@ public class HeapSort extends Sorter {
 
     public HeapSort(int[] ints) {
         super(ints);
-        setMemoryacesses(0);
-        setInts(ints);
-
     }
 
 
@@ -99,25 +96,5 @@ public class HeapSort extends Sorter {
         return clone;
     }
 
-    @Override
-    public int[] getInts() {
-        return ints;
-    }
 
-    public void setInts(int[] ints) {
-        this.ints = ints;
-    }
-
-    @Override
-    public int getMemoryacesses() {
-        return memoryacesses;
-    }
-
-    public void setMemoryacesses(int memoryacesses) {
-        this.memoryacesses = memoryacesses;
-    }
-
-    public void addToAccesses(int i){
-        setMemoryacesses(getMemoryacesses() + i);
-    }
 }

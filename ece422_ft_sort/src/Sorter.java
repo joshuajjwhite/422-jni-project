@@ -6,13 +6,12 @@ public abstract class Sorter {
     /*
     * Memory accesses will be defined as reading or writing to a variable
     * */
-    public int memoryacesses;
+    public int memoryAccesses;
     private int[] ints;
-
 
     public Sorter(int[] ints){
         setInts(ints);
-        setMemoryacesses(0);
+        setMemoryAccesses(0);
     }
 
     public int[] sort() {
@@ -28,15 +27,15 @@ public abstract class Sorter {
         this.ints = ints;
     }
 
-    public int getMemoryacesses() {
-        return memoryacesses;
+    public int getMemoryAccesses() {
+        return memoryAccesses;
     }
 
-    public void setMemoryacesses(int memoryacesses) {
-        this.memoryacesses = memoryacesses;
+    public void setMemoryAccesses(int memoryacesses) {
+        this.memoryAccesses = memoryacesses;
     }
 
     public void addToAccesses(int i){
-        setMemoryacesses(getMemoryacesses() + i);
+        setMemoryAccesses(getMemoryAccesses() + i);
     }
 }

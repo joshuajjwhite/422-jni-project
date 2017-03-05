@@ -3,9 +3,6 @@
  */
 public class HeapSort extends Sorter {
 
-    private int memoryacesses;
-    private int[] ints;
-
     public HeapSort(int[] ints) {
         super(ints);
     }
@@ -29,17 +26,19 @@ public class HeapSort extends Sorter {
 
     @Override
     public int[] sort() {
-        setMemoryacesses(0);
+        setMemoryAccesses(0);
 
         int[] sortints = createClone();
         int n = sortints.length;
         addToAccesses(2);
 
         for (int k = n/2; k >= 1; k--) {
+            addToAccesses(4);
             sink(sortints, k, n);
 
         }
         while (n > 1) {
+            addToAccesses(1);
             exch(sortints, 1, n--);
             sink(sortints, 1, n);
         }
@@ -87,12 +86,12 @@ public class HeapSort extends Sorter {
     private int[] createClone(){
         int[] clone = new int[getInts().length];
         addToAccesses(1);
-        
+
         for(int i=0; i<getInts().length; i++){
             clone[i] = getInts()[i];
             addToAccesses(2);
         }
-        
+
         return clone;
     }
 

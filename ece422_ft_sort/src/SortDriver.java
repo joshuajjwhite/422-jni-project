@@ -11,61 +11,62 @@ public class SortDriver {
 
     private SortAdjudicator at;
 
-    private int timeout;
+    private int timeOut;
 
-    public SortDriver(String inputfile, String outputfile, float pfail, float sfail, int timeout){
-        setInput(new FileHandler(inputfile));
-        setOutput(new FileHandler(outputfile));
-        setTimeout(timeout);
+    public SortDriver(String inputFile, String outputFile, float primaryFail, float secondaryFail, int timeOut){
+        setInput(new FileHandler(inputFile));
+        setOutput(new FileHandler(outputFile));
+        setTimeOut(timeOut);
 
         setAt(new SortAdjudicator());
 
         //Checkpoint
-        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), pfail, getAt()));
-        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), sfail, getAt()));
+        setPrimary(new Variant(new HeapSort(getInput().readFromFile()), primaryFail, getAt()));
+        setSecondary(new Variant(new InsertionSort(getInput().readFromFile()), secondaryFail, getAt()));
 
     }
 
     public void start(){
-        //Primary Algorithm
         runVariant(getPrimary(), "Primary");
 
-        if(getPrimary().isSuccess()){
-            System.out.println("Success on Primary");
+        if(getPrimary().isSuccess() && getAt().isSuccess()){
+            System.out.println("Success on Primary\n");
             writeVariant(getPrimary());
         }
         else{
-            System.out.println("Running Secondary...");
-            runVariant(getSecondary(), "Secondary");
-        }
 
-        /*
-        if(getAt().isSuccess()){
-            System.out.println("Success on Secondary");
-            writeVariant(getSecondary());
+            runVariant(getSecondary(), "Secondary");
+
+            if(getSecondary().isSuccess() && getAt().isSuccess()){
+                System.out.println("Success on Secondary\n");
+                writeVariant(getSecondary());
+            }
+            else{
+                System.out.println("Failure on Secondary");
+                getOutput().deleteFile();
+                throw new ThreadDeath();
+            }
         }
-        else{
-            System.out.println("Failure on Secondary");
-            throw new ThreadDeath();
-        }*/
+        throw new ThreadDeath();
     }
 
-    private void runVariant(Variant variant, String desc) {
+    private void runVariant(Variant variant, String description) {
         Thread thread = new Thread(variant);
         WatchDog watchdog = new WatchDog(thread);
 
+        //Timers run on their own thread
         Timer timer = new Timer();
-        timer.schedule(watchdog, getTimeout());
+        timer.schedule(watchdog, getTimeOut());
 
         thread.start();
         try {
+            System.out.println("\nRunning " + description +"...");
             thread.join();
             timer.cancel();
-            System.out.print("End of " + desc + "... ");
-            //System.out.println(Integer.toString(variant.getSorter().getMemoryacesses()) + " Memory Accesses");
+            System.out.println("End of " + description + "... ");
         } catch (InterruptedException e) {
             e.printStackTrace();
-            System.out.println(desc + " Interrupted");
+            System.out.println(description + " Interrupted");
         }
     }
 
@@ -125,12 +126,12 @@ public class SortDriver {
         driver.start();
     }
 
-    public int getTimeout() {
-        return timeout;
+    public int getTimeOut() {
+        return timeOut;
     }
 
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
+    public void setTimeOut(int timeOut) {
+        this.timeOut = timeOut;
     }
 }
 

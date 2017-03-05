@@ -10,20 +10,21 @@ import java.io.IOException;
  */
 public class FileHandler {
 
-    private String filename;
+    private String fileName;
 
-    public FileHandler(String filename){
-        setFilename(filename);
+    public FileHandler(String fileName){
+        setFileName(fileName);
     }
 
     //Credit to Steven
     //http://stackoverflow.com/questions/5820508/writing-an-array-to-a-file-in-java
     protected void writeToFile(int[] ints) throws IOException {
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(this.getFilename()));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(this.getFileName()));
             for (int i: ints){
                 writer.write(Integer.toString(i) + " ");
             }
+            writer.write("\n");
             writer.close();
         } catch(IOException ex) {
             ex.printStackTrace();
@@ -32,13 +33,13 @@ public class FileHandler {
 
     protected int[] readFromFile(){
         try {
-            String str = FileUtils.readFileToString(new File(getFilename()), "utf-8");
+            String str = FileUtils.readFileToString(new File(getFileName()), "utf-8");
             str = str.trim().replace("\n", "");
-            String[] stringsplit = str.split(" ");
-            int[] ints = new int[stringsplit.length];
+            String[] stringSplit = str.split(" ");
+            int[] ints = new int[stringSplit.length];
 
-            for(int i=0; i<stringsplit.length; i++) {
-                ints[i] = Integer.parseInt(stringsplit[i]);
+            for(int i=0; i<stringSplit.length; i++) {
+                ints[i] = Integer.parseInt(stringSplit[i]);
             }
 
             return ints;
@@ -48,11 +49,16 @@ public class FileHandler {
         return null;
     }
 
-    public String getFilename() {
-        return filename;
+    protected void deleteFile(){
+        File file = new File(getFileName());
+        file.delete();
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

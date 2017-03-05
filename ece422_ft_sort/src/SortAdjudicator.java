@@ -13,11 +13,11 @@ public class SortAdjudicator {
     public void ajudicate(int[] ints) {
         if(isSorted(ints)){
             System.out.print("Ajudicator Success... ");
-            ajudicatorSuccess();
+            adjudicatorSuccess();
         }
         else{
             System.out.print("Ajudicator Failure... ");
-            ajudicatorFailure();
+            adjudicatorFailure();
         }
     }
 
@@ -38,11 +38,11 @@ public class SortAdjudicator {
         this.success = success;
     }
 
-    public void ajudicatorSuccess() {
+    public void adjudicatorSuccess() {
         setSuccess(true);
     }
 
-    public void ajudicatorFailure() {
+    public void adjudicatorFailure() {
         setSuccess(false);
     }
 }

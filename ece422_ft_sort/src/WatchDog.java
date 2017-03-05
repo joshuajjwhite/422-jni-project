@@ -9,7 +9,6 @@ import java.util.TimerTask;
 /**
  * @author dick
  *
-
  */
 public class WatchDog extends TimerTask {
 
@@ -22,9 +21,11 @@ public class WatchDog extends TimerTask {
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */
+    @SuppressWarnings("deprecation")
     public void run() {
         watched.stop();
         System.out.println("Thread Timed Out!");
+        throw  new ThreadDeath();
     }
 
 }

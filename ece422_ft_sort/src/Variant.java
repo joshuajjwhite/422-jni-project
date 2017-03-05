@@ -7,13 +7,13 @@ import static java.lang.Thread.sleep;
  */
 public class Variant implements Runnable {
 
-    private float failrate;
+    private float failRate;
     private Sorter sorter;
     private SortAdjudicator at;
     private boolean success;
 
-    public Variant(Sorter sorter, float failrate, SortAdjudicator at){
-        setFailrate(failrate);
+    public Variant(Sorter sorter, float failRate, SortAdjudicator at){
+        setFailRate(failRate);
         setSorter(sorter);
         setAt(at);
     }
@@ -37,21 +37,22 @@ public class Variant implements Runnable {
             getAt().ajudicate(getSorter().sort());
 
             if (isFailure() || !getAt().isSuccess()) {
-                throw new localException();
+                throw new LocalException();
             }
             variantSuccess();
         }
-        catch (localException le){
+        catch (LocalException le){
             variantFailure();
+            getAt().setSuccess(false);
         }
     }
 
-    public float getFailrate() {
-        return failrate;
+    public float getFailRate() {
+        return failRate;
     }
 
-    public void setFailrate(float hazard) {
-        this.failrate = hazard;
+    public void setFailRate(float hazard) {
+        this.failRate = hazard;
     }
 
     public Sorter getSorter() {
@@ -73,13 +74,15 @@ public class Variant implements Runnable {
     private boolean isFailure(){
         //Evaluates random failure of variant
         Random rand = new Random();
-        float hazard = sorter.getMemoryacesses()*getFailrate();
+        float hazard = sorter.getMemoryAccesses()* getFailRate();
         float chance = rand.nextFloat();
 
         if((0.5f <= chance) && (chance <= (0.5f + hazard))){
-            System.out.println("Random Failure... chance: " + chance + " hazard: " + hazard);
+            System.out.println("Memory Failure... chance: " + chance + " hazard: " + hazard);
             return true;
         }
+
+        System.out.println("No Memory Failure... chance: " + chance + " hazard: " + hazard);
         return false;
     }
 

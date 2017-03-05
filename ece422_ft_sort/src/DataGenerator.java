@@ -10,9 +10,9 @@ public class DataGenerator {
     private int size;
     private FileHandler output;
 
-    private DataGenerator(String outputfile, int size) {
+    private DataGenerator(String outputFile, int size) {
         this.setSize(size);
-        this.setOutput(new FileHandler(outputfile));
+        this.setOutput(new FileHandler(outputFile));
     }
 
     private FileHandler getOutput() {
@@ -48,7 +48,6 @@ public class DataGenerator {
             e.printStackTrace();
         }
     }
-
 
     /**
      * @param args
